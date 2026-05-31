@@ -3,11 +3,12 @@ import 'package:http/http.dart' as http;
 import '../models/product_model.dart';
 
 class ApiService {
-  // الرابط الأساسي لسيرفر Laragon
-  static const String baseUrl = 'http://fresh-shop-api.test/api';
+  // الرابط الأساسي (تأكد من عدم وجود مائلة مائلة إضافية في النهاية)
+  static const String baseUrl =
+      'http://192.168.1.101/fresh-shop-api/public/api';
 
-  // دالة جلب المنتجات من قاعدة بيانات MySQL عبر Laravel
   Future<List<Product>> fetchProducts() async {
+    // هنا يتم دمج الرابط الأساسي مع الـ Endpoint المخصص للمنتجات
     final Uri url = Uri.parse('$baseUrl/products');
 
     try {
