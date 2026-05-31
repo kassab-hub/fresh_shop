@@ -43,3 +43,24 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+# Android specific caches (⚠️ ناقصة ومهمة جداً لجهازك)
+android/.gradle/
+android/local.properties
+android/captures/
+*.apk
+*.aar
+*.bundle
+
+# iOS specific caches (⚠️ تمنع تراكم ملفات الـ iOS الضخمة)
+ios/.generated/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Pods/
+.symlinks/
+
+# Web caching (إذا كنت تشغل المشروع على المتصفح)
+.web_plugin_registrant.dart
