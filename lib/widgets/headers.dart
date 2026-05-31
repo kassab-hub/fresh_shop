@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fresh_shop/screens/cart_screen.dart';
 
 class Headers extends StatefulWidget {
   const Headers({super.key});
@@ -48,7 +49,10 @@ class _HeadersState extends State<Headers> {
                 icon: const Icon(Icons.shopping_basket_outlined),
                 color: Theme.of(context).colorScheme.primary,
                 onPressed: () {
-                  // سنربطه بشاشة السلة لاحقاً
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CartScreen()),
+                  );
                 },
               ),
             ),
