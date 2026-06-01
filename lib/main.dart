@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
           seedColor: AppColors.primary,
           primary: AppColors.primary,
           secondary: AppColors.accent,
-          background: AppColors.background,
+          surface: Colors.white,
         ),
 
         // 2. الخط الافتراضي لكل التطبيق

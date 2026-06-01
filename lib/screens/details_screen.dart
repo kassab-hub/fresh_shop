@@ -39,9 +39,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             flex: 4,
             child: Container(
               width: double.infinity,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.5),
               child: Image.asset(
-                widget.product.image,
+                'assets/images/${widget.product.image}',
                 fit: BoxFit
                     .contain, // لجعل الصورة متناسقة داخل المساحة بدون تمدد مشوه
               ),

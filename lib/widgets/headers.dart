@@ -11,76 +11,46 @@ class Headers extends StatefulWidget {
 class _HeadersState extends State<Headers> {
   @override
   Widget build(BuildContext context) {
-    // قمنا بوضع المكونات داخل Column لكي نتمكن من عمل return لها جميعاً معاً
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // 🎯 بقيت الـ Row فقط لتضم الترحيب وزر السلة، وحذفنا الـ Column وشريط البحث القديم
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // 1. الترويسة (Header)
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'مرحباً بك 👋',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                ),
-                const Text(
-                  'تسوق خضار طازجة',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-              ],
+            Text(
+              'مرحباً بك 👋',
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
-            // زر السلة العلوي
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.shopping_basket_outlined),
-                color: Theme.of(context).colorScheme.primary,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CartScreen()),
-                  );
-                },
-              ),
+            const Text(
+              'تسوق خضار طازجة',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
           ],
         ),
 
-        const SizedBox(height: 20), // مسافة بين الترويسة وشريط البحث
-        // 2. شريط البحث (Search Bar)
+        // زر السلة العلوي الاحترافي
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.05),
+                color: Colors.grey.withValues(alpha: 0.1),
                 blurRadius: 10,
                 spreadRadius: 2,
               ),
             ],
           ),
-          child: const TextField(
-            decoration: InputDecoration(
-              hintText: 'ابحث عن خضار أو فواكه...',
-              hintStyle: TextStyle(color: Colors.grey),
-              prefixIcon: Icon(Icons.search, color: Colors.grey),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 15),
-            ),
+          child: IconButton(
+            icon: const Icon(Icons.shopping_basket_outlined),
+            color: Theme.of(context).colorScheme.primary,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CartScreen()),
+              );
+            },
           ),
         ),
       ],

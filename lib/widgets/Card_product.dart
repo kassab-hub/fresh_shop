@@ -42,7 +42,9 @@ class CardProduct extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.05),
+                  color: Colors.grey.withValues(
+                    alpha: 0.2,
+                  ), // عدلها حسب لونك وقيمة الشفافية هناك
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),
@@ -58,7 +60,7 @@ class CardProduct extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Theme.of(
                         context,
-                      ).colorScheme.primary.withOpacity(0.1),
+                      ).colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(20),
                       ),
@@ -66,7 +68,7 @@ class CardProduct extends StatelessWidget {
                     // 4. التعديل هنا: استدعاء المتغير الديناميكي product.image بدون علامات تنصيص
                     child: Image(
                       image: AssetImage(
-                        product.image,
+                        'assets/images/${product.image}',
                       ), // تم الإصلاح لقراءة مسار الصورة من الموديل مباشرة
                       fit: BoxFit.contain,
                       // كود احتياطي: في حال لم يجد فلاتر الصورة، يعرض أيقونة افتراضية بدلاً من انهيار الشاشة

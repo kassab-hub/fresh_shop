@@ -1,52 +1,79 @@
 import 'package:flutter/material.dart';
 
-class Menu extends StatefulWidget {
-  const Menu({super.key});
+class Menu extends StatelessWidget {
+  // 🎯 أضفنا هذه المتغيرات لاستقبال التحكم من الشاشة الرئيسية
+  final int selectedIndex;
+  final Function(int) onCategorySelected;
 
-  @override
-  State<Menu> createState() => _MenuState();
-}
+  const Menu({
+    super.key,
+    required this.selectedIndex,
+    required this.onCategorySelected,
+  });
 
-class _MenuState extends State<Menu> {
-  // قائمة تجريبية للأقسام
-  final List<String> categories = ['الكل', 'خضروات', 'فواكه', 'ورقيات'];
-  int selectedCategoryIndex = 0; // لمعرفة القسم النشط حالياً
+  // قائمة الأقسام الثابتة
+  final List<String> categories = const ['الكل', 'خضروات', 'فواكه', 'ورقيات'];
 
   @override
   Widget build(BuildContext context) {
-    return // 3. قائمة الأقسام (Categories) - عرض أفقي
-    SizedBox(
-      height: 40,
+    return SizedBox(
+      height: 46,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        physics: const BouncingScrollPhysics(),
         itemBuilder: (context, index) {
-          bool isSelected = selectedCategoryIndex == index;
+          bool isSelected = selectedIndex == index;
+
           return GestureDetector(
             onTap: () {
-              setState(() {
-                selectedCategoryIndex = index;
-              });
+              // 🎯 عندما يضغط المستخدم، نرسل رقم القسم للشاشة الرئيسية فوراً
+              onCategorySelected(index);
             },
-            child: Container(
-              margin: const EdgeInsets.only(left: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : Colors.grey.withOpacity(0.2),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 10,
                 ),
-              ),
-              child: Text(
-                categories[index],
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black87,
-                  fontWeight: FontWeight.bold,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : [],
+                  border: Border.all(
+                    color: isSelected
+                        ? Colors.transparent
+                        : Colors.grey.withValues(alpha: 0.15),
+                  ),
+                ),
+                child: Center(
+                  child: AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 200),
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black87,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w500,
+                      fontSize: isSelected ? 15 : 14,
+                    ),
+                    child: Text(categories[index]),
+                  ),
                 ),
               ),
             ),

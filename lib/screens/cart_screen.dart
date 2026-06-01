@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/cart_model.dart';
+import '../services/api_service.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -9,7 +10,9 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  // دالة لحساب المجموع الإجمالي للمشتريات
+  bool _isLoading = false; // التحكم بمؤشر تحميل الزر
+
+  // دالة لحساب المجموع الإجمالي
   double calculateTotal() {
     double total = 0;
     for (var item in globalCart) {
@@ -34,11 +37,13 @@ class _CartScreenState extends State<CartScreen> {
       ),
       body: globalCart.isEmpty
           ? const Center(
-              child: Text('سلتك فارغة حالياً وعالم الخضار ينتظرك! 🥦'),
+              child: Text(
+                'سلتك فارغة حالياً وعالم الخضار ينتظرك! 🥦',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
             )
           : Column(
               children: [
-                // قائمة المنتجات المضافة
                 Expanded(
                   child: ListView.builder(
                     itemCount: globalCart.length,
@@ -56,7 +61,7 @@ class _CartScreenState extends State<CartScreen> {
                         ),
                         child: Row(
                           children: [
-                            // صورة المنتج المصغرة
+                            // استخدام Image.asset بناءً على طلبك مبدئياً
                             Container(
                               width: 70,
                               height: 70,
@@ -65,12 +70,11 @@ class _CartScreenState extends State<CartScreen> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Image.asset(
-                                item.product.image,
+                                'assets/images/${item.product.image}',
                                 fit: BoxFit.contain,
                               ),
                             ),
                             const SizedBox(width: 15),
-                            // اسم المنتج وسعره
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +98,6 @@ class _CartScreenState extends State<CartScreen> {
                                 ],
                               ),
                             ),
-                            // زر الحذف من السلة
                             IconButton(
                               icon: const Icon(
                                 Icons.delete_outline,
@@ -112,8 +115,6 @@ class _CartScreenState extends State<CartScreen> {
                     },
                   ),
                 ),
-
-                // الحاوية السفلية للمجموع وزر الدفع
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: const BoxDecoration(
@@ -149,16 +150,78 @@ class _CartScreenState extends State<CartScreen> {
                         width: double.infinity,
                         height: 55,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // هنا تضع خطوة إتمام الطلب لاحقاً
-                          },
-                          child: const Text(
-                            'إتمام الشراء',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
                             ),
                           ),
+                          onPressed: _isLoading
+                              ? null
+                              : () async {
+                                  if (globalCart.isEmpty) return;
+
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+
+                                  List<Map<String, dynamic>> formattedItems =
+                                      globalCart
+                                          .map(
+                                            (item) => {
+                                              'product_id': item.product.id,
+                                              'quantity': item.quantity,
+                                              'price': item.product.price,
+                                            },
+                                          )
+                                          .toList();
+
+                                  bool success = await ApiService()
+                                      .sendOrderToLaravel(
+                                        totalPrice: calculateTotal(),
+                                        cartItems: formattedItems,
+                                      );
+
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+
+                                  // 🎯 الحل: التحقق الآمن والمباشر من الـ BuildContext قبل الاستخدام
+                                  if (!context.mounted) return;
+
+                                  if (success) {
+                                    setState(() {
+                                      globalCart.clear();
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          '🎉 تم إرسال طلبك بنجاح وحفظه في MySQL!',
+                                        ),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          '❌ فشل في إرسال الطلب، تأكد من اتصال السيرفر',
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                },
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  'إتمام الشراء',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
                       ),
                     ],
