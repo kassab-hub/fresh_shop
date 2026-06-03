@@ -45,10 +45,7 @@ class _WelcomeState extends State<Welcome> {
 
                   // في حال الخطأ: بدلاً من الأيقونة، يعرض صورتك المحلية 'welcome.png'
                   errorWidget: (context, url, error) {
-                    return Image.asset(
-                      'assets/images/welcome.png',
-                      fit: BoxFit.contain,
-                    );
+                    return const Icon(Icons.eco, size: 50, color: Colors.green);
                   },
                 ),
               ),
