@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fresh_shop/models/cart_model.dart';
+import 'package:fresh_shop/widgets/global_file.dart';
 import '../models/product_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final Product product; // استقبال بيانات المنتج الذي تم الضغط عليه
@@ -34,16 +36,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       body: Column(
         children: [
           // 1. صورة المنتج مكبرة
-          // 1. صورة المنتج مكبرة
           Expanded(
             flex: 4,
             child: Container(
               width: double.infinity,
               color: Colors.black.withValues(alpha: 0.5),
-              child: Image.asset(
-                'assets/images/${widget.product.image}',
-                fit: BoxFit
-                    .contain, // لجعل الصورة متناسقة داخل المساحة بدون تمدد مشوه
+              child: CachedNetworkImage(
+                imageUrl: '${AppGlobals.url_upload}${widget.product.image}',
+                fit: BoxFit.contain,
+                placeholder: (context, url) => const Center(
+                  child: CircularProgressIndicator(color: Colors.green),
+                ),
+                errorWidget: (context, url, error) =>
+                    const Icon(Icons.eco, size: 50, color: Colors.green),
               ),
             ),
           ),

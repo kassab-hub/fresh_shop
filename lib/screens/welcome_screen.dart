@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fresh_shop/screens/home_screen.dart';
+import 'package:fresh_shop/widgets/global_file.dart';
 // قم باستيراد الشاشة الرئيسية هنا بعد إنشائها
 // import 'home_screen.dart';
 
@@ -25,9 +27,29 @@ class _WelcomeState extends State<Welcome> {
               // 1. الصورة الترحيبية
               Expanded(
                 flex: 3, // تأخذ مساحة أكبر وتتجاوب مع الشاشات المختلفة
-                child: Image.asset(
-                  'assets/images/welcome.png',
+                child: CachedNetworkImage(
+                  imageUrl: '${AppGlobals.url_upload}welcome.png',
                   fit: BoxFit.contain,
+
+                  // أثناء التحميل: يعرض مؤشر التحميل الأخضر الذي صممته
+                  placeholder: (context, url) => const Center(
+                    child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        color: Colors.green,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                  ),
+
+                  // في حال الخطأ: بدلاً من الأيقونة، يعرض صورتك المحلية 'welcome.png'
+                  errorWidget: (context, url, error) {
+                    return Image.asset(
+                      'assets/images/welcome.png',
+                      fit: BoxFit.contain,
+                    );
+                  },
                 ),
               ),
 

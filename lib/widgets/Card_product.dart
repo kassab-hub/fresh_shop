@@ -1,7 +1,9 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:fresh_shop/screens/details_screen.dart';
+import 'package:fresh_shop/widgets/global_file.dart';
 import '../models/product_model.dart'; // 1. استيراد الموديل
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CardProduct extends StatelessWidget {
   // 2. طلب قائمة المنتجات عند استدعاء هذا الكارد
@@ -66,13 +68,23 @@ class CardProduct extends StatelessWidget {
                       ),
                     ),
                     // 4. التعديل هنا: استدعاء المتغير الديناميكي product.image بدون علامات تنصيص
-                    child: Image(
-                      image: AssetImage(
-                        'assets/images/${product.image}',
-                      ), // تم الإصلاح لقراءة مسار الصورة من الموديل مباشرة
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          '${AppGlobals.url_upload}${product.image}', // رابط السيرفر الخاص بك
                       fit: BoxFit.contain,
-                      // كود احتياطي: في حال لم يجد فلاتر الصورة، يعرض أيقونة افتراضية بدلاً من انهيار الشاشة
-                      errorBuilder: (context, error, stackTrace) {
+                      // مؤشر تحميل يظهر أثناء جلب الصورة من السيرفر
+                      placeholder: (context, url) => const Center(
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                            color: Colors.green,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      ),
+                      // كود احتياطي: في حال لم يجد فلاتر الصورة أو انقطع الإنترنت، يعرض أيقونة افتراضية
+                      errorWidget: (context, url, error) {
                         return const Icon(
                           Icons.eco,
                           size: 50,

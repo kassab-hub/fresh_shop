@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fresh_shop/widgets/global_file.dart';
 import '../models/cart_model.dart';
 import '../services/api_service.dart';
 
@@ -69,9 +71,20 @@ class _CartScreenState extends State<CartScreen> {
                                 color: Colors.grey[100],
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Image.asset(
-                                'assets/images/${item.product.image}',
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    '${AppGlobals.url_upload}${item.product.image}',
                                 fit: BoxFit.contain,
+                                placeholder: (context, url) => const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.eco, color: Colors.green),
                               ),
                             ),
                             const SizedBox(width: 15),
