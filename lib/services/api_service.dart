@@ -7,13 +7,22 @@ class ApiService {
   // الرابط الأساسي الصحيح للشبكة الداخلية
   static const String baseUrl = 'http://10.55.15.21/fresh-shop-api/public/api';
 
-  /// 1. جلب المنتجات بنظام الصفحات (GET)
-  Future<Map<String, dynamic>> fetchProducts({int page = 1}) async {
+  /// 1. جلب المنتجات بنظام الصفحات مع دعم الفلترة حسب التصنيف (GET)
+  // 🎯 التعديل: جعل البارامترات Named Parameters وإضافة `String? category`
+  Future<Map<String, dynamic>> fetchProducts({
+    int page = 1,
+    String? category,
+  }) async {
     try {
-      // 🎯 التصحيح: استخدام الـ baseUrl الصحيح وتمرير رقم الصفحة بدقة
-      final response = await http.get(
-        Uri.parse('$baseUrl/products?page=$page'),
-      );
+      // بناء الرابط الأساسي مع رقم الصفحة
+      String url = '$baseUrl/products?page=$page';
+
+      // 🎯 التعديل: إذا تم تمرير اسم قسم معين (وليس الكل)، نقوم بإضافته للرابط مع تشفيره بأمان لدعم اللغة العربية
+      if (category != null && category.isNotEmpty) {
+        url += '&category=${Uri.encodeComponent(category)}';
+      }
+
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final decodedData = json.decode(response.body);
@@ -28,7 +37,9 @@ class ApiService {
           'meta': decodedData['meta'], // بيانات الـ Paging الأساسية
         };
       } else {
-        throw Exception('فشل في جلب البيانات من السيرفر');
+        throw Exception(
+          'فشل في جلب البيانات من السيرفر: ${response.statusCode}',
+        );
       }
     } catch (e) {
       log("خطأ أثناء جلب المنتجات: $e");
