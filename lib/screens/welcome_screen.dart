@@ -28,7 +28,7 @@ class _WelcomeState extends State<Welcome> {
               Expanded(
                 flex: 3, // تأخذ مساحة أكبر وتتجاوب مع الشاشات المختلفة
                 child: CachedNetworkImage(
-                  imageUrl: '${AppGlobals.url_upload}welcome.png',
+                  imageUrl: '${AppGlobals.urlUpload}welcome.png',
                   fit: BoxFit.contain,
 
                   // أثناء التحميل: يعرض مؤشر التحميل الأخضر الذي صممته

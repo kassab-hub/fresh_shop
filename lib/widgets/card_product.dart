@@ -70,7 +70,7 @@ class CardProduct extends StatelessWidget {
                     // 4. التعديل هنا: استدعاء المتغير الديناميكي product.image بدون علامات تنصيص
                     child: CachedNetworkImage(
                       imageUrl:
-                          '${AppGlobals.url_upload}${product.image}', // رابط السيرفر الخاص بك
+                          '${AppGlobals.urlUpload}${product.image}', // رابط السيرفر الخاص بك
                       fit: BoxFit.contain,
                       // مؤشر تحميل يظهر أثناء جلب الصورة من السيرفر
                       placeholder: (context, url) => const Center(

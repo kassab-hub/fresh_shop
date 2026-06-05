@@ -42,7 +42,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               width: double.infinity,
               color: Colors.black.withValues(alpha: 0.5),
               child: CachedNetworkImage(
-                imageUrl: '${AppGlobals.url_upload}${widget.product.image}',
+                imageUrl: '${AppGlobals.urlUpload}${widget.product.image}',
                 fit: BoxFit.contain,
                 placeholder: (context, url) => const Center(
                   child: CircularProgressIndicator(color: Colors.green),

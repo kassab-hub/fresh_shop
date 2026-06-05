@@ -150,9 +150,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Menu(
               selectedIndex: _selectedCategoryIndex,
               onCategorySelected: (index, categoryName) {
-                if (_selectedCategoryIndex == index)
+                if (_selectedCategoryIndex == index) {
                   return; // تمنع إعادة التحميل إذا ضغط نفس القسم
-
+                }
                 setState(() {
                   _selectedCategoryIndex = index;
                   _selectedCategoryName = categoryName;

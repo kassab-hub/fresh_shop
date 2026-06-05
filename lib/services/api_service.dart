@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:fresh_shop/widgets/global_file.dart';
 import 'package:http/http.dart' as http;
 import '../models/product_model.dart';
 import 'dart:developer';
 
 class ApiService {
   // الرابط الأساسي الصحيح للشبكة الداخلية
-  static const String baseUrl = 'http://10.55.15.21/fresh-shop-api/public/api';
+  static final Uri baseUrl = Uri.parse(AppGlobals.apiBaseUrl); // "http://
 
   /// 1. جلب المنتجات بنظام الصفحات مع دعم الفلترة حسب التصنيف (GET)
   // 🎯 التعديل: جعل البارامترات Named Parameters وإضافة `String? category`

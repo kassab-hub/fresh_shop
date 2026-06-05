@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fresh_shop/widgets/global_file.dart';
 import 'package:http/http.dart' as http;
 
 class Menu extends StatefulWidget {
@@ -22,7 +23,7 @@ class _MenuState extends State<Menu> {
     try {
       // نستخدم الأي بي الخاص بسيرفر لاراجون المحلي
       final response = await http.get(
-        Uri.parse('http://10.55.15.21/fresh-shop-api/public/api/categories'),
+        Uri.parse('${AppGlobals.apiBaseUrl}/categories'),
       );
 
       if (response.statusCode == 200) {

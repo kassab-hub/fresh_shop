@@ -73,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               child: CachedNetworkImage(
                                 imageUrl:
-                                    '${AppGlobals.url_upload}${item.product.image}',
+                                    '${AppGlobals.urlUpload}${item.product.image}',
                                 fit: BoxFit.contain,
                                 placeholder: (context, url) => const SizedBox(
                                   width: 24,
