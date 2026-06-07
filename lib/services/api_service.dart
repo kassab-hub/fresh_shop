@@ -5,22 +5,21 @@ import '../models/product_model.dart';
 import 'dart:developer';
 
 class ApiService {
-  // الرابط الأساسي الصحيح للشبكة الداخلية
-  static final Uri baseUrl = Uri.parse(AppGlobals.apiBaseUrl); // "http://
+  // الرابط الأساسي الديناميكي للمشروع
+  static final Uri baseUrl = Uri.parse(AppGlobals.apiBaseUrl);
 
-  /// 1. جلب المنتجات بنظام الصفحات مع دعم الفلترة حسب التصنيف (GET)
-  // 🎯 التعديل: جعل البارامترات Named Parameters وإضافة `String? category`
+  // جلب المنتجات مع دعم الفلترة ورقم الصفحة
   Future<Map<String, dynamic>> fetchProducts({
     int page = 1,
     String? category,
   }) async {
     try {
       // بناء الرابط الأساسي مع رقم الصفحة
-      String url = '$baseUrl/products?page=$page';
+      String url = "$baseUrl/products?page=$page";
 
-      // 🎯 التعديل: إذا تم تمرير اسم قسم معين (وليس الكل)، نقوم بإضافته للرابط مع تشفيره بأمان لدعم اللغة العربية
+      // التعديل: إذا تم تمرير اسم قسم معين، نقوم بإضافته للرابط مع التشفير لدعم اللغة العربية
       if (category != null && category.isNotEmpty) {
-        url += '&category=${Uri.encodeComponent(category)}';
+        url += "&category=${Uri.encodeComponent(category)}";
       }
 
       final response = await http.get(Uri.parse(url));
