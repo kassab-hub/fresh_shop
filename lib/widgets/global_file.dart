@@ -1,8 +1,8 @@
 class AppGlobals {
   // تم تغيير المسار ليكون عبر الروابط العامة للسيرفر
   static const String urlUpload =
-      "http://192.168.1.101/fresh-shop-api/storage/app/public/";
+      "http://10.55.15.21/fresh-shop-api/public/storage/";
 
   static const String apiBaseUrl =
-      "http://192.168.1.101/fresh-shop-api/public/api";
+      "http://10.55.15.21/fresh-shop-api/public/api";
 }

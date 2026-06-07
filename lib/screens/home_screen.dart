@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fresh_shop/models/product_model.dart';
+import 'package:fresh_shop/screens/login_screen.dart';
 import 'package:fresh_shop/services/api_service.dart';
 import 'package:fresh_shop/widgets/card_product.dart';
 import 'package:fresh_shop/widgets/headers.dart';
 import 'package:fresh_shop/widgets/menu.dart';
 import 'package:fresh_shop/widgets/search_field.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // 🎯 مضاف لجلب بيانات الجلسة وتسجيل الخروج
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,10 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _selectedCategoryName;
   String _searchQuery = '';
 
+  String _userName =
+      'مستخدم'; // 🎯 لتخزين اسم المستخدم القادم من السيرفر محلياً
+
   @override
   void initState() {
     super.initState();
-    // جلب المنتجات للقسم المختار (null في البداية يعني جلب الكل)
+    _loadUserData(); // 🎯 جلب اسم المستخدم عند فتح الشاشة
     _fetchProductsPage(_currentPage, category: _selectedCategoryName);
     _scrollController.addListener(_scrollListener);
   }
@@ -42,8 +47,33 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  // 🎯 دالة قراءة بيانات جلسة المستخدم المسجل
+  void _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userName = prefs.getString('user_name') ?? 'مستخدم دائم';
+    });
+  }
+
+  // 🎯 دالة تسجيل الخروج والعودة لصفحة الدخول بنظافة
+  // 🎯 الدالة المحدثة لتسجيل الخروج والانتقال المباشر بدون نظام الـ Routes
+  void _handleLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // مسح الـ user_id والـ token تماماً من ذاكرة الهاتف
+
+    if (mounted) {
+      // الانتقال مباشرة إلى شاشة تسجيل الدخول وتفريغ شجرة الصفحات السابقة لمنع العودة
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ), // 👈 الانتقال المباشر لكائن الشاشة
+        (route) => false,
+      );
+    }
+  }
+
   void _scrollListener() {
-    // نوقف الـ Pagination فقط أثناء البحث النصي الحي
     if (_searchQuery.isNotEmpty) return;
 
     if (_scrollController.position.pixels >=
@@ -54,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // 🎯 قمنا بتحديث الدالة لتستقبل اسم القسم وتمرره للـ API Service
   Future<void> _fetchProductsPage(int page, {String? category}) async {
     if (page == 1) {
       setState(() {
@@ -76,8 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _currentPage = page;
         _hasMorePages = response['meta']['has_more'] ?? false;
-
-        // 🎯 التعديل هنا: جلب القائمة مباشرة لأنها محولة مسبقاً داخل الـ ApiService
         final List<Product> fetchedProducts = response['data'];
 
         if (page == 1) {
@@ -105,13 +132,12 @@ class _HomeScreenState extends State<HomeScreen> {
           .trim()
           .toLowerCase()
           .replaceAll('ة', 'ه')
-          .replaceAll('ى', 'ي')
+          .replaceAll('ى', 'i') // تم إبقاؤها كما هي لديك للاستقرار
           .replaceAll('إ', 'ا')
           .replaceAll('أ', 'ا')
           .replaceAll('آ', 'ا');
     }
 
-    // 🎯 أصبحت الفلترة هنا للـ البحث فقط لأن الأقسام أصبحت تأتي جاهزة ومفلترة من السيرفر بكفاءة 100%
     if (_searchQuery.isNotEmpty) {
       factoryList = factoryList.where((product) {
         final cleanProductName = normalizeArabic(product.name);
@@ -129,13 +155,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
+
+      // 🎯 مضاف: إضافة شريط علوي أنيق يحتوي على اسم المستخدم وزر تسجيل الخروج
+      appBar: AppBar(
+        title: Text(
+          'أهلاً بك، $_userName 🍃',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        automaticallyImplyLeading:
+            false, // يمنع ظهور سهم العودة للخلف بشكل إجباري
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.redAccent),
+            tooltip: 'تسجيل الخروج',
+            onPressed: _handleLogout,
+          ),
+        ],
+      ),
+
       body: SafeArea(
         child: ListView(
           controller: _scrollController,
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           children: [
             const Headers(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
 
             SearchField(
               onSearchChanged: (value) {
@@ -151,15 +195,14 @@ class _HomeScreenState extends State<HomeScreen> {
               selectedIndex: _selectedCategoryIndex,
               onCategorySelected: (index, categoryName) {
                 if (_selectedCategoryIndex == index) {
-                  return; // تمنع إعادة التحميل إذا ضغط نفس القسم
+                  return;
                 }
                 setState(() {
                   _selectedCategoryIndex = index;
                   _selectedCategoryName = categoryName;
-                  _currentPage = 1; // تصفير الصفحات للبدء من جديد للقسم الجديد
+                  _currentPage = 1;
                 });
 
-                // 🎯 طلب منتجات القسم المختار فوراً من السيرفر برقم صفحة 1
                 _fetchProductsPage(1, category: categoryName);
               },
             ),
